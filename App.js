@@ -2,10 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {signIn, onAuthStateChange } from './authFunctions';
+import {signIn, onAuthStateChange, signOutUser} from './authFunctions';
+import { Button } from 'react-native';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import EvenementPage from "./EvenementPage";
+import {signOut} from "firebase/auth";
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +31,17 @@ export default function App() {
 
     const handleSignIn = async () => {
         await signIn(email, password);
+    };
+
+    const LogoutButton = ({ navigation }) => {
+        const handleLogout = () => {
+            signOutUser();
+            navigation.navigate('AuthPage');
+        };
+
+        return (
+            <Button title="Déconnexion" onPress={handleLogout} />
+        );
     };
 
     if (!isAuthenticated) {
@@ -75,6 +88,14 @@ export default function App() {
                     name="EvenementPage"
                     component={EvenementPage}
                     options={{ title: 'Evènement page' }}
+                />
+                <Tab.Screen
+                    name="LogoutPage"
+                    component={() => null}
+                    options={{
+                        title: 'Déconnexion',
+                        tabBarButton: (props) => <LogoutButton {...props} />,
+                    }}
                 />
             </Tab.Navigator>
         </NavigationContainer>
