@@ -1,6 +1,19 @@
 // authFunctions.js
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from './firebaseConfig';
+
+
+export const createUser = async (email, password) => {
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('Utilisateur créé avec succès:', user);
+        return user;
+    } catch (error) {
+        console.error('Erreur lors de la création de l\'utilisateur:', error.message);
+        throw error;
+    }
+};
 
 export const signIn = async (email, password) => {
     try {
@@ -21,7 +34,7 @@ export const signOutUser = async () => {
 };
 
 export const onAuthStateChange = (setEmailCallback) => {
-    onAuthStateChanged(auth, (user) => {
+    return onAuthStateChanged(auth, (user) => {
         if (user) {
             setEmailCallback(user.email);
         } else {
